@@ -45,6 +45,13 @@
         "com.unity.modules.imgui": "1.0.0"
       }
     },
+    "com.xgame.framework": {
+      "version": "https://github.com/lingllting/XGameFramework.git?path=/Assets/Framework",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "6c37c311c6d99360d911730131eb1b8b60adcf63"
+    },
     "com.unity.modules.ai": {
       "version": "1.0.0",
       "depth": 0,
