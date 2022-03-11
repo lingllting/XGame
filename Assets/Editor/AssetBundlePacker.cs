@@ -38,6 +38,7 @@ public static partial class AssetBundlePacker
     {
         PrePack();
         Pack();
+        PostPack();
     }
 
     [MenuItem("Tools/AssetBundle/1.PrePack")]
@@ -46,12 +47,9 @@ public static partial class AssetBundlePacker
         InitData();
         
         PrepareAssets();
-        BuildAssetDependencies();
+        BuildAssetDependency();
         PrepareBundles();
         BuildBundleDependency();
-        
-        SaveAssetXml(AssetBundleDirectory + "/Asset.xml");
-        SaveBundleXml(AssetBundleDirectory + "/Bundle.xml");
     }
 
     public static void Pack()
@@ -99,23 +97,38 @@ public static partial class AssetBundlePacker
         }
         catch (Exception e)
         {
-            Debug.Log("打包出现异常，请检查: " + e.Message);
+            Debug.Log("Build Error: " + e.Message);
             EditorUtility.ClearProgressBar();
             throw new Exception(e.Message);
         }
 
         if (manifest == null)
         {
-            Debug.Log("AssetBundle打包失败");
+            Debug.Log("Build AssetBundle Failed!");
         }
         else
         {
-            Debug.Log("AssetBundle打包完毕");
+            Debug.Log("Build AssetBundle Succeeded!");
         }
     }
 
     public static void PostPack()
     {
+        using Dictionary<string, Bundle>.Enumerator it = s_bundleDict.GetEnumerator();
+        while (it.MoveNext())
+        {
+            Bundle bundle = it.Current.Value;
+            if (bundle != null)
+            {
+                bundle.locationPath = string.Format("{0}/{1}", AssetBundleDirectory, bundle.uniqueName);
+                bundle.isModified = true;
+
+                ProcessBundle(bundle);
+            }
+        }
+        
+        SaveAssetXml(AssetBundleDirectory + "/Asset.xml");
+        SaveBundleXml(AssetBundleDirectory + "/Bundle.xml");
     }
 
     private static bool IsValidAssetPath(string path)

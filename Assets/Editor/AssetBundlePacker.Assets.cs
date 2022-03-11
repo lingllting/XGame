@@ -166,7 +166,7 @@ public static partial class AssetBundlePacker
 
         return asset;
     }
-    private static void BuildAssetDependencies()
+    private static void BuildAssetDependency()
     {
         //Find indirect dependencies of all assets
         Dictionary<string, List<string>> indirectDependencyDict = new Dictionary<string, List<string>>();

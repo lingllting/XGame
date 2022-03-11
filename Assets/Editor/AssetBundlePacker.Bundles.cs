@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
 using System.Xml;
 using UnityEditor;
 using UnityEngine;
@@ -485,6 +487,23 @@ public static partial class AssetBundlePacker
             }
         }
         xmlDoc.Save(path);
+    }
+    
+    private static void ProcessBundle(Bundle bundle)
+    {
+        if (bundle != null && File.Exists(bundle.locationPath))
+        {
+            FileStream file = new FileStream(bundle.locationPath, FileMode.Open);
+            byte[] data = new byte[(int)file.Length];
+            file.Read(data, 0, data.Length);
+            file.Close();
+            file.Dispose();
+
+            //计算MD5
+            bundle.srcSize = data.Length >> 10;
+            MD5CryptoServiceProvider md5Generator = new MD5CryptoServiceProvider();
+            bundle.srcMD5 = System.BitConverter.ToString(md5Generator.ComputeHash(data)).Replace("-", string.Empty);
+        }
     }
     
 }
